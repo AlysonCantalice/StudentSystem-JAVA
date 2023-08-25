@@ -1,5 +1,11 @@
 package application;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -44,6 +50,10 @@ public class Program {
 					int age = sc.nextInt();
 					System.out.print("Registration number: ");
 					int registrationNumber = sc.nextInt();
+					while (checkRegistration(students, registrationNumber) == true) {
+						System.out.print("Registration number already taken. Please choose another: ");
+						registrationNumber = sc.nextInt();
+					}
 					System.out.print("Phone Number: ");
 					int phoneNumber = sc.nextInt();
 
@@ -156,6 +166,10 @@ public class Program {
 							System.out.print("New registration number: ");
 							sc.nextLine();
 							registrationNumber = sc.nextInt();
+							while (checkRegistration(students, registrationNumber) == true) {
+								System.out.print("Registration number already taken. Please choose another: ");
+								registrationNumber = sc.nextInt();
+							}
 							foundStudent.setRegistration(registrationNumber);
 							System.out.println("Registration number updated.");
 							pressEnter();
@@ -203,10 +217,59 @@ public class Program {
 			}
 			// Import CSV
 			case 6: {
+				System.out.println("Import from CSV");
+				System.out.print("Directory path where the CSV is. ex(c:\\\\temp\\\\StudentData): ");
+				sc.nextLine();
+				String strPath = sc.nextLine();
+
+				File file = new File(strPath + "\\StudentData.csv");
+				if (!file.exists()) {
+					System.out.println("There is no file to import.");
+					pressEnter();
+				} else {
+					try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+						String line = br.readLine();
+						while (line != null) {
+							String[] tmp = line.split(",");
+							students.add(new Student(tmp[0], Integer.parseInt(tmp[1]), Integer.parseInt(tmp[2]),
+									Integer.parseInt(tmp[3])));
+							line = br.readLine();
+						}
+					} catch (IOException e) {
+						System.out.println("Error: " + e.getMessage());
+						pressEnter();
+					} finally {
+						System.out.println("Data import successfully!");
+						pressEnter();
+					}
+				}
 				break;
 			}
 			// Export CSV
 			case 7: {
+				System.out.println("Export to CSV");
+				System.out.print("Directory path ex(c:\\\\temp\\\\StudentData): ");
+				sc.nextLine();
+				String strPath = sc.nextLine();
+
+				File file = new File(strPath);
+				if (!file.exists()) { // Check whether the directory exists, if not create it
+					file.mkdir();
+				}
+
+				try (BufferedWriter bw = new BufferedWriter(new FileWriter(strPath + "\\StudentData.csv"))) {
+					for (Student student : students) {
+						bw.write(student.toCSV());
+						bw.newLine();
+					}
+				} catch (IOException e) {
+					System.out.println("Error: " + e.getMessage());
+					pressEnter();
+				}
+				finally {
+					System.out.println("Data exported successfully!");
+					pressEnter();
+				}
 				break;
 			}
 
@@ -225,26 +288,43 @@ public class Program {
 			}
 			}
 
-			if (exit == true) {
+			if (exit == true)
+
+			{
 				break;
 			}
+
 			clearScreen();
+
 		}
 
 		sc.close();
 
 	}
 
-	public static void pressEnter() { // Press Enter to continue function
+	// input 'Press Enter to continue function' to user
+	public static void pressEnter() {
 		System.out.print("Press Enter key to continue... ");
 		@SuppressWarnings("resource") // Remove warning about not closing the scanner
 		Scanner sc = new Scanner(System.in);
 		sc.nextLine();
 		// Won't close the scanner otherwise we will have problems in the main program
 	}
-
+	
+	// Clears the console
 	public static void clearScreen() {
 		System.out.print("\033[H\033[2J");
 		System.out.flush();
+	}
+	
+	// Check whether a registration is already being used by another student
+	public static boolean checkRegistration(List<Student> students, int registrationNumber) { 
+		boolean exists = false;
+		for (Student student : students) {
+			if (student.getRegistration() == registrationNumber) {
+				exists = true;
+			}
+		}
+		return exists;
 	}
 }
