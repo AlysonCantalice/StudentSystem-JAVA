@@ -1,17 +1,10 @@
 package application;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
 
 import entities.Student;
+import entities.StudentRegistration;
 
 public class Program {
 
@@ -19,8 +12,8 @@ public class Program {
 		Locale.setDefault(Locale.US);
 		Scanner sc = new Scanner(System.in);
 
-		List<Student> students = new ArrayList<>();
 		boolean exit = false;
+		StudentRegistration studentRegistration = new StudentRegistration();
 
 		while (true) {
 			System.out.println("Welcome to the Student Registration System!");
@@ -50,14 +43,14 @@ public class Program {
 					int age = sc.nextInt();
 					System.out.print("Registration number: ");
 					int registrationNumber = sc.nextInt();
-					while (checkRegistration(students, registrationNumber) == true) {
+					while (studentRegistration.checkRegistration(registrationNumber) == true) {
 						System.out.print("Registration number already taken. Please choose another: ");
 						registrationNumber = sc.nextInt();
 					}
 					System.out.print("Phone Number: ");
 					int phoneNumber = sc.nextInt();
 
-					students.add(new Student(name, age, registrationNumber, phoneNumber));
+					studentRegistration.addStudent(name, age, registrationNumber, phoneNumber);
 
 					System.out.println("Student registered successfully!");
 					System.out.print("Do you wish to register another student? (Y/N): ");
@@ -76,22 +69,17 @@ public class Program {
 			// Find student
 			case 2: {
 				System.out.println();
-				if (students.size() == 0) {
+				if (studentRegistration.isThereStudents() == false) {
 					System.out.println("There are no students to find.");
 					pressEnter();
 				} else {
 					System.out.print("Enter the registration number of the student: ");
 					int registrationNumber = sc.nextInt();
-					boolean found = false;
-					for (Student student : students) {
-						if (student.getRegistration() == registrationNumber) {
-							System.out.println(student);
-							found = true;
-							pressEnter();
-							break;
-						}
-					}
-					if (found == false) {
+					Student foundStudent = studentRegistration.findStudent(registrationNumber);
+					if (foundStudent != null) {
+						System.out.println(foundStudent);
+						pressEnter();
+					} else {
 						System.out.println("Student not found.");
 						pressEnter();
 					}
@@ -101,16 +89,11 @@ public class Program {
 			// Show all students
 			case 3: {
 				System.out.println();
-				if (students.size() == 0) {
+				if (studentRegistration.isThereStudents() == false) {
 					System.out.println("There are no students to show.");
 					pressEnter();
 				} else {
-					int i = 1;
-					for (Student student : students) {
-						System.out.println("Student " + i);
-						System.out.println(student);
-						i++;
-					}
+					studentRegistration.showStudents();
 					pressEnter();
 				}
 				break;
@@ -118,19 +101,13 @@ public class Program {
 			// update student
 			case 4: {
 				System.out.println();
-				if (students.size() == 0) {
+				if (studentRegistration.isThereStudents() == false) {
 					System.out.println("There are no students to update.");
 					pressEnter();
 				} else {
 					System.out.print("Enter the registration number of the student: ");
 					int registrationNumber = sc.nextInt();
-					Student foundStudent = null;
-					for (Student student : students) {
-						if (student.getRegistration() == registrationNumber) {
-							foundStudent = student;
-							break;
-						}
-					}
+					Student foundStudent = studentRegistration.findStudent(registrationNumber);
 					if (foundStudent == null) {
 						System.out.println("Student not found.");
 						pressEnter();
@@ -166,7 +143,7 @@ public class Program {
 							System.out.print("New registration number: ");
 							sc.nextLine();
 							registrationNumber = sc.nextInt();
-							while (checkRegistration(students, registrationNumber) == true) {
+							while (studentRegistration.checkRegistration(registrationNumber) == true) {
 								System.out.print("Registration number already taken. Please choose another: ");
 								registrationNumber = sc.nextInt();
 							}
@@ -192,26 +169,14 @@ public class Program {
 			// Remove student
 			case 5: {
 				System.out.println();
-				if (students.size() == 0) {
+				if (studentRegistration.isThereStudents() == false) {
 					System.out.println("There are no students to remove.");
 					pressEnter();
 				} else {
 					System.out.print("Enter the registration number of the student: ");
 					int registrationNumber = sc.nextInt();
-					boolean found = false;
-					for (Student student : students) {
-						if (student.getRegistration() == registrationNumber) {
-							students.remove(student);
-							found = true;
-							System.out.println("Student removed.");
-							pressEnter();
-							break;
-						}
-					}
-					if (found == false) {
-						System.out.println("Student not found.");
-						pressEnter();
-					}
+					studentRegistration.removeStudent(registrationNumber);
+					pressEnter();
 				}
 				break;
 			}
@@ -222,27 +187,8 @@ public class Program {
 				sc.nextLine();
 				String strPath = sc.nextLine();
 
-				File file = new File(strPath + "\\StudentData.csv");
-				if (!file.exists()) {
-					System.out.println("There is no file to import.");
-					pressEnter();
-				} else {
-					try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-						String line = br.readLine();
-						while (line != null) {
-							String[] tmp = line.split(",");
-							students.add(new Student(tmp[0], Integer.parseInt(tmp[1]), Integer.parseInt(tmp[2]),
-									Integer.parseInt(tmp[3])));
-							line = br.readLine();
-						}
-					} catch (IOException e) {
-						System.out.println("Error: " + e.getMessage());
-						pressEnter();
-					} finally {
-						System.out.println("Data import successfully!");
-						pressEnter();
-					}
-				}
+				studentRegistration.importCSV(strPath);
+				pressEnter();
 				break;
 			}
 			// Export CSV
@@ -252,27 +198,10 @@ public class Program {
 				sc.nextLine();
 				String strPath = sc.nextLine();
 
-				File file = new File(strPath);
-				if (!file.exists()) { // Check whether the directory exists, if not create it
-					file.mkdir();
-				}
-
-				try (BufferedWriter bw = new BufferedWriter(new FileWriter(strPath + "\\StudentData.csv"))) {
-					for (Student student : students) {
-						bw.write(student.toCSV());
-						bw.newLine();
-					}
-				} catch (IOException e) {
-					System.out.println("Error: " + e.getMessage());
-					pressEnter();
-				}
-				finally {
-					System.out.println("Data exported successfully!");
-					pressEnter();
-				}
+				studentRegistration.exportCSV(strPath);
+				pressEnter();
 				break;
 			}
-
 			// Exit
 			case 8: {
 				System.out.println();
@@ -288,9 +217,7 @@ public class Program {
 			}
 			}
 
-			if (exit == true)
-
-			{
+			if (exit == true) {
 				break;
 			}
 
@@ -310,21 +237,10 @@ public class Program {
 		sc.nextLine();
 		// Won't close the scanner otherwise we will have problems in the main program
 	}
-	
+
 	// Clears the console
 	public static void clearScreen() {
 		System.out.print("\033[H\033[2J");
 		System.out.flush();
-	}
-	
-	// Check whether a registration is already being used by another student
-	public static boolean checkRegistration(List<Student> students, int registrationNumber) { 
-		boolean exists = false;
-		for (Student student : students) {
-			if (student.getRegistration() == registrationNumber) {
-				exists = true;
-			}
-		}
-		return exists;
 	}
 }

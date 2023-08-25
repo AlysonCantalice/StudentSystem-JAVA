@@ -1,10 +1,18 @@
 package entities;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Student {
 	private String name;
 	private Integer age;
 	private Integer registration;
 	private Integer phoneNumber;
+
+	List<Student> students = new ArrayList<>();
+
+	public Student() {
+	}
 
 	public Student(String name, Integer age, Integer registration, Integer phoneNumber) {
 		this.name = name;
@@ -43,6 +51,10 @@ public class Student {
 
 	public void setPhoneNumber(Integer phoneNumber) {
 		this.phoneNumber = phoneNumber;
+	}
+
+	public List<Student> getStudents() {
+		return students;
 	}
 
 	public String toCSV() {
