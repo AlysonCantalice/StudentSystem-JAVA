@@ -186,7 +186,7 @@ public class Program {
 				// Import CSV
 				case 6: {
 					System.out.println("Import from CSV");
-					System.out.print("Directory path where the CSV is. ex(c:\\\\temp\\\\StudentData): ");
+					System.out.print("Directory path where the CSV is. ex(c:\\temp\\StudentData): ");
 					sc.nextLine();
 					String strPath = sc.nextLine();
 
@@ -197,7 +197,7 @@ public class Program {
 				// Export CSV
 				case 7: {
 					System.out.println("Export to CSV");
-					System.out.print("Directory path ex(c:\\\\temp\\\\StudentData): ");
+					System.out.print("Directory path ex(c:\\temp\\StudentData): ");
 					sc.nextLine();
 					String strPath = sc.nextLine();
 

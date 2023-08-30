@@ -3,7 +3,7 @@ package entities;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Student {
+public class Student implements Comparable<Student>{
 	private String name;
 	private Integer age;
 	private Integer registration;
@@ -68,5 +68,16 @@ public class Student {
 		sb.append("Registration N.: " + registration + "\n");
 		sb.append("Phone Number: " + phoneNumber + "\n");
 		return sb.toString();
+	}
+
+	@Override
+	public int compareTo(Student o) {
+		if (registration < o.getRegistration()) {
+			return -1;
+		}
+		else if (registration > o.getRegistration()) {
+			return 1;
+		}
+		return 0;
 	}
 }

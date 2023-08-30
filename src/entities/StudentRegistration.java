@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class StudentRegistration {
 
@@ -26,12 +28,30 @@ public class StudentRegistration {
 		students.getStudents().add(new Student(name, age, registrationNumber, phoneNumber));
 	}
 
+	public void addStudent(Student student) {
+		students.getStudents().add(student);
+	}
+
 	public void showStudents() {
+		// Show all students by registration number ascending order
 		int i = 1;
+		sortStudents();
 		for (Student student : students.getStudents()) {
 			System.out.println("Student " + i);
 			System.out.println(student);
 			i++;
+		}
+	}
+
+	private void sortStudents() {
+		// Sort by registration number
+		Set<Student> set = new TreeSet<Student>();
+		for (int i = 0; i < students.getStudents().size(); i++) {
+			set.add(students.getStudents().get(i));
+		}
+		clearStudents();
+		for (Student s : set) {
+			addStudent(s);
 		}
 	}
 
@@ -97,7 +117,7 @@ public class StudentRegistration {
 			System.out.println("Error: " + e.getMessage());
 		}
 	}
-	
+
 	private void clearStudents() {
 		students.getStudents().clear();
 	}
