@@ -6,8 +6,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.Scanner;
 
 public class StudentRegistration {
 
@@ -33,25 +32,13 @@ public class StudentRegistration {
 	}
 
 	public void showStudents() {
-		// Show all students by registration number ascending order
+		// Show all students sorted by registration number ascending order
 		int i = 1;
-		sortStudents();
+		students.getStudents().sort((s1, s2) -> s1.getRegistration().compareTo(s2.getRegistration()));
 		for (Student student : students.getStudents()) {
 			System.out.println("Student " + i);
 			System.out.println(student);
 			i++;
-		}
-	}
-
-	private void sortStudents() {
-		// Sort by registration number
-		Set<Student> set = new TreeSet<Student>();
-		for (int i = 0; i < students.getStudents().size(); i++) {
-			set.add(students.getStudents().get(i));
-		}
-		clearStudents();
-		for (Student s : set) {
-			addStudent(s);
 		}
 	}
 
@@ -70,6 +57,36 @@ public class StudentRegistration {
 		} else {
 			students.getStudents().remove(findStudent(registrationNumber));
 			System.out.println("Student removed.");
+		}
+	}
+
+	public void updateStudent(Student student, int field, Scanner sc) {
+		switch (field) {
+		case 1:
+			System.out.print("New name: ");
+			student.setName(sc.nextLine());
+			System.out.println("Name updated.");
+			break;
+		case 2:
+			System.out.print("New age: ");
+			student.setAge(sc.nextInt());
+			System.out.println("Age updated.");
+			break;
+		case 3:
+			System.out.print("New registration number: ");
+			int registrationNumber = sc.nextInt();
+			while (checkRegistration(registrationNumber)) {
+				System.out.print("Registration number already taken. Please choose another: ");
+				registrationNumber = sc.nextInt();
+			}
+			student.setRegistration(registrationNumber);
+			System.out.println("Registration number updated.");
+			break;
+		case 4:
+			System.out.print("New phone number: ");
+			student.setPhoneNumber(sc.nextInt());
+			System.out.println("Phone Number updated.");
+			break;
 		}
 	}
 

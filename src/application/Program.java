@@ -9,9 +9,10 @@ import entities.StudentRegistration;
 
 public class Program {
 
+	public static final Scanner sc = new Scanner(System.in);
+
 	public static void main(String[] args) {
 		Locale.setDefault(Locale.US);
-		Scanner sc = new Scanner(System.in);
 
 		boolean exit = false;
 		StudentRegistration studentRegistration = new StudentRegistration();
@@ -72,7 +73,7 @@ public class Program {
 				// Find student
 				case 2: {
 					System.out.println();
-					if (studentRegistration.isThereStudents() == false) {
+					if (!studentRegistration.isThereStudents()) {
 						System.out.println("There are no students to find.");
 						pressEnter();
 					} else {
@@ -92,7 +93,7 @@ public class Program {
 				// Show all students
 				case 3: {
 					System.out.println();
-					if (studentRegistration.isThereStudents() == false) {
+					if (!studentRegistration.isThereStudents()) {
 						System.out.println("There are no students to show.");
 						pressEnter();
 					} else {
@@ -104,7 +105,7 @@ public class Program {
 				// update student
 				case 4: {
 					System.out.println();
-					if (studentRegistration.isThereStudents() == false) {
+					if (!studentRegistration.isThereStudents()) {
 						System.out.println("There are no students to update.");
 						pressEnter();
 					} else {
@@ -121,58 +122,18 @@ public class Program {
 							System.out.println("(4) Phone Number: " + foundStudent.getPhoneNumber());
 							System.out.println();
 							System.out.println("Which field will be updated? ");
-							int answer = sc.nextInt();
-
-							switch (answer) {
-							case 1: {
-								System.out.print("New name: ");
-								sc.nextLine();
-								String name = sc.nextLine();
-								foundStudent.setName(name);
-								System.out.println("Name updated.");
-								pressEnter();
-								break;
-							}
-							case 2: {
-								System.out.print("New age: ");
-								sc.nextLine();
-								int age = sc.nextInt();
-								foundStudent.setAge(age);
-								System.out.println("Age updated.");
-								pressEnter();
-								break;
-							}
-							case 3: {
-								System.out.print("New registration number: ");
-								sc.nextLine();
-								registrationNumber = sc.nextInt();
-								while (studentRegistration.checkRegistration(registrationNumber) == true) {
-									System.out.print("Registration number already taken. Please choose another: ");
-									registrationNumber = sc.nextInt();
-								}
-								foundStudent.setRegistration(registrationNumber);
-								System.out.println("Registration number updated.");
-								pressEnter();
-								break;
-							}
-							case 4: {
-								System.out.print("New phone number: ");
-								sc.nextLine();
-								int phoneNumber = sc.nextInt();
-								foundStudent.setPhoneNumber(phoneNumber);
-								System.out.println("Phone Number updated.");
-								pressEnter();
-								break;
-							}
-							}
+							int field = sc.nextInt();
+							studentRegistration.updateStudent(foundStudent, field, sc);
 						}
 					}
+					pressEnter();
+					System.out.println();
 					break;
 				}
 				// Remove student
 				case 5: {
 					System.out.println();
-					if (studentRegistration.isThereStudents() == false) {
+					if (!studentRegistration.isThereStudents()) {
 						System.out.println("There are no students to remove.");
 						pressEnter();
 					} else {
@@ -227,11 +188,11 @@ public class Program {
 			} catch (InputMismatchException e) {
 				System.out.println("Invalid input, please enter integer numbers.");
 				pressEnter();
-				sc.nextLine();
+				System.out.println();
 			} catch (RuntimeException e) {
 				System.out.println("Unexpected error.");
 				pressEnter();
-				sc.nextLine();
+				System.out.println();
 			}
 			clearScreen();
 		}
@@ -243,10 +204,8 @@ public class Program {
 	// input 'Press Enter to continue function' to user
 	public static void pressEnter() {
 		System.out.print("Press Enter key to continue... ");
-		@SuppressWarnings("resource") // Remove warning about not closing the scanner
-		Scanner sc = new Scanner(System.in);
-		sc.nextLine();
-		// Won't close the scanner otherwise we will have problems in the main program
+		sc.nextLine(); // 'Eats' the line that comes
+		System.out.println(sc.nextLine());
 	}
 
 	// Clears the console
