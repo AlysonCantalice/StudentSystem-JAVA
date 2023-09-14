@@ -64,6 +64,7 @@ public class StudentRegistration {
 		switch (field) {
 		case 1:
 			System.out.print("New name: ");
+			sc.nextLine();
 			student.setName(sc.nextLine());
 			System.out.println("Name updated.");
 			break;
