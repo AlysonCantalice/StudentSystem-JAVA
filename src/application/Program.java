@@ -37,7 +37,7 @@ public class Program {
 				// Add new student
 				case 1: {
 					while (true) {
-						System.out.println();
+						clearScreen();
 						System.out.println("Registering a new Student");
 						sc.nextLine();
 						System.out.print("Name: ");
@@ -73,6 +73,7 @@ public class Program {
 				// Find student
 				case 2: {
 					System.out.println();
+					clearScreen();
 					if (!studentRegistration.isThereStudents()) {
 						System.out.println("There are no students to find.");
 						pressEnter();
@@ -93,6 +94,7 @@ public class Program {
 				// Show all students
 				case 3: {
 					System.out.println();
+					clearScreen();
 					if (!studentRegistration.isThereStudents()) {
 						System.out.println("There are no students to show.");
 						pressEnter();
@@ -105,9 +107,9 @@ public class Program {
 				// update student
 				case 4: {
 					System.out.println();
+					clearScreen();
 					if (!studentRegistration.isThereStudents()) {
 						System.out.println("There are no students to update.");
-						pressEnter();
 					} else {
 						System.out.print("Enter the registration number of the student: ");
 						int registrationNumber = sc.nextInt();
@@ -133,6 +135,7 @@ public class Program {
 				// Remove student
 				case 5: {
 					System.out.println();
+					clearScreen();
 					if (!studentRegistration.isThereStudents()) {
 						System.out.println("There are no students to remove.");
 						pressEnter();
